@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/sh -e
+
+LOG_DIRS=${LOG_DIRS:-\\/var\\/lib\\/kafka}
 
 if [ ! -z "$KAFKA_HOST" ]; then
     echo "advertised host: $KAFKA_HOST"
@@ -15,7 +17,12 @@ if [ ! -z "$KAFKA_ID" ]; then
     sed -r -i "s/(broker.id)=(.*)/\1=$KAFKA_ID/g" $KAFKA_HOME/config/server.properties
 fi
 
-# Set the zookeeper connect from the environment variable 
+if [ ! -z "$LOG_DIRS" ]; then
+  echo "log dirs: $LOG_DIRS"
+  sed -r -i "s/(log.dirs)=(.*)/\1=$LOG_DIRS/g" $KAFKA_HOME/config/server.properties
+fi
+
+# Set the zookeeper connect from the environment variable
 if [ ! -z "$ZOOKEEPER_CONNECT" ]; then
     echo "zookeeper connect: $ZOOKEEPER_CONNECT"
     sed -r -i "s/(zookeeper.connect)=(.*)/\1=$ZOOKEEPER_CONNECT/g" $KAFKA_HOME/config/server.properties
